@@ -1,281 +1,303 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { 
-  BookOpen, 
-  Clock, 
-  Award, 
-  TrendingUp, 
-  Calendar,
-  Download,
+import React from 'react';
+import axios from 'axios';
+import { load } from "@cashfreepayments/cashfree-js";
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
+import {
+  BookOpen,
+  Clock,
+  Award,
+  CreditCard,
+  CheckCircle,
+  XCircle,
   PlayCircle,
   FileText,
-  User
-} from "lucide-react";
+  LogOut,
+} from 'lucide-react';
 
-const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState("overview");
+const Dashboard: React.FC = () => {
+  const { user, logout } = useAuth();
+  const loggedInUser = JSON.parse(localStorage.getItem("user"))
+  const navigate = useNavigate();
+  { console.log(loggedInUser) }
+  if (!user) return null;
 
-  const enrolledCourses = [
-    {
-      id: 1,
-      title: "MERN Stack Development",
-      progress: 75,
-      status: "In Progress",
-      nextClass: "2024-01-20",
-      totalLessons: 40,
-      completedLessons: 30
-    },
-    {
-      id: 2,
-      title: "MERN Stack Internship",
-      progress: 45,
-      status: "Active",
-      nextClass: "2024-01-21",
-      totalLessons: 20,
-      completedLessons: 9
+  // ✅ ADD createOrder FUNCTION
+  const createOrder = async () => {
+    try {
+      const response = await axios.post('https://codingshaala-backend.onrender.com/api/payment/create-order', {
+        email: loggedInUser.email,
+        phone: loggedInUser.phone,
+        name: loggedInUser.name,
+      });
+
+      const { paymentSessionId } = response.data;
+
+      if (!paymentSessionId) {
+        alert('Failed to create Cashfree order');
+        return;
+      }
+
+      const cashfree = await load({
+        mode: "sandbox", // or "production"
+      });
+
+      cashfree.checkout({
+        paymentSessionId: paymentSessionId,
+        redirectTarget: "_self",
+      });
+
+    } catch (err) {
+      console.error('Error in creating order:', err);
+      alert('Something went wrong while initiating payment.');
     }
-  ];
+  };
 
-  const assignments = [
-    {
-      id: 1,
-      title: "Build a React Todo App",
-      dueDate: "2024-01-25",
-      status: "Pending",
-      course: "MERN Stack Development"
-    },
-    {
-      id: 2,
-      title: "Create REST API with Node.js",
-      dueDate: "2024-01-28",
-      status: "In Progress",
-      course: "MERN Stack Internship"
+  const getTestStatusBadge = () => {
+    switch (loggedInUser.status) {
+      case 'new':
+        return <Badge variant="secondary" className="gap-1"><Clock className="h-3 w-3" />Not Started</Badge>;
+      case 'in_progress':
+        return <Badge variant="destructive" className="gap-1"><PlayCircle className="h-3 w-3" />In Progress</Badge>;
+      case 'completed':
+        return user.testResult === 'passed'
+          ? <Badge className="bg-success hover:bg-success/80 gap-1"><CheckCircle className="h-3 w-3" />Passed</Badge>
+          : <Badge variant="destructive" className="gap-1"><XCircle className="h-3 w-3" />Failed</Badge>;
+      default:
+        return null;
     }
-  ];
+  };
 
-  const achievements = [
-    {
-      title: "Quick Learner",
-      description: "Completed 10 lessons in a week",
-      date: "2024-01-15",
-      icon: <TrendingUp className="h-5 w-5" />
-    },
-    {
-      title: "Perfect Attendance",
-      description: "Attended all classes this month",
-      date: "2024-01-10",
-      icon: <Calendar className="h-5 w-5" />
+  const getPaymentStatusBadge = () => {
+    return user.paymentStatus === 'completed'
+      ? <Badge className="bg-success hover:bg-success/80 gap-1"><CheckCircle className="h-3 w-3" />Paid</Badge>
+      : <Badge variant="secondary" className="gap-1"><CreditCard className="h-3 w-3" />Pending</Badge>;
+  };
+
+  const getProgressPercentage = () => {
+    return Math.round(
+      (user.internshipDetails.classesCompleted / user.internshipDetails.totalClasses) * 100
+    );
+  };
+
+  const getNextAction = () => {
+    if (loggedInUser.status === 'new') {
+      return {
+        title: 'Take Entrance Test',
+        description: 'Complete the assessment to join our internship program',
+        action: () => navigate('/testinterface'),
+        buttonText: 'Start Test',
+        variant: 'gradient' as const,
+      };
     }
-  ];
+
+    if (loggedInUser.status === 'test_failed') {
+      return {
+        title: 'Test Results',
+        description: 'Unfortunately, you did not pass the entrance test',
+        action: () => navigate('/result'),
+        buttonText: 'View Results',
+        variant: 'outline' as const,
+      };
+    }
+
+    if (
+      loggedInUser.status === 'test_passed' &&
+      loggedInUser.isPaid === false
+    ) {
+      return {
+        title: 'Complete Payment',
+        description: 'You passed! Complete payment to start your internship',
+        action: createOrder, // ✅ USE createOrder function
+        buttonText: 'Pay Now',
+        variant: 'gradient' as const,
+      };
+    }
+
+    if (user.paymentStatus === 'completed') {
+      return {
+        title: 'Continue Learning',
+        description: 'Access your course materials and track progress',
+        action: () => navigate('/program'),
+        buttonText: 'View Program',
+        variant: 'gradient' as const,
+      };
+    }
+
+    return null;
+  };
+
+  const nextAction = getNextAction();
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      
-      <section className="py-20 bg-gradient-to-b from-secondary/30 to-background">
-        <div className="container mx-auto px-4">
-          <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">Student Dashboard</h1>
-            <p className="text-muted-foreground">
-              Welcome back! Track your progress and manage your courses.
-            </p>
+    <div className="min-h-screen bg-gradient-subtle">
+      {/* Header */}
+      <div className="bg-card border-b glass-effect sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold gradient-text">CodingShaala</h1>
+            <Badge variant="outline">Student Portal</Badge>
           </div>
-          
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="courses">My Courses</TabsTrigger>
-              <TabsTrigger value="assignments">Assignments</TabsTrigger>
-              <TabsTrigger value="profile">Profile</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="overview" className="mt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Active Courses</CardTitle>
-                    <BookOpen className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{enrolledCourses.length}</div>
-                    <p className="text-xs text-muted-foreground">Currently enrolled</p>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Completed Lessons</CardTitle>
-                    <PlayCircle className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">39</div>
-                    <p className="text-xs text-muted-foreground">Total lessons completed</p>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Pending Assignments</CardTitle>
-                    <FileText className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{assignments.filter(a => a.status === "Pending").length}</div>
-                    <p className="text-xs text-muted-foreground">Due this week</p>
-                  </CardContent>
-                </Card>
-              </div>
-              
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Recent Achievements</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {achievements.map((achievement, index) => (
-                        <div key={index} className="flex items-center space-x-3">
-                          <div className="p-2 bg-primary/10 rounded-full">
-                            {achievement.icon}
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-sm">{achievement.title}</h4>
-                            <p className="text-xs text-muted-foreground">{achievement.description}</p>
-                          </div>
-                          <Badge variant="secondary">{achievement.date}</Badge>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Upcoming Classes</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {enrolledCourses.map((course) => (
-                        <div key={course.id} className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
-                          <div>
-                            <h4 className="font-semibold text-sm">{course.title}</h4>
-                            <p className="text-xs text-muted-foreground">Next class: {course.nextClass}</p>
-                          </div>
-                          <Badge variant="outline">{course.status}</Badge>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="courses" className="mt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {enrolledCourses.map((course) => (
-                  <Card key={course.id}>
-                    <CardHeader>
-                      <div className="flex justify-between items-start">
-                        <CardTitle className="text-lg">{course.title}</CardTitle>
-                        <Badge variant={course.status === "Active" ? "default" : "secondary"}>
-                          {course.status}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        <div>
-                          <div className="flex justify-between text-sm mb-2">
-                            <span>Progress</span>
-                            <span>{course.progress}%</span>
-                          </div>
-                          <Progress value={course.progress} className="h-2" />
-                        </div>
-                        
-                        <div className="text-sm text-muted-foreground">
-                          {course.completedLessons} of {course.totalLessons} lessons completed
-                        </div>
-                        
-                        <div className="flex gap-2">
-                          <Button size="sm" className="flex-1">
-                            <PlayCircle className="h-4 w-4 mr-2" />
-                            Continue Learning
-                          </Button>
-                          <Button size="sm" variant="outline">
-                            <Download className="h-4 w-4 mr-2" />
-                            Resources
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="assignments" className="mt-6">
-              <div className="space-y-4">
-                {assignments.map((assignment) => (
-                  <Card key={assignment.id}>
-                    <CardContent className="pt-6">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <h3 className="font-semibold mb-2">{assignment.title}</h3>
-                          <p className="text-sm text-muted-foreground mb-2">Course: {assignment.course}</p>
-                          <p className="text-sm text-muted-foreground">Due: {assignment.dueDate}</p>
-                        </div>
-                        <div className="flex flex-col items-end gap-2">
-                          <Badge variant={assignment.status === "Pending" ? "destructive" : "default"}>
-                            {assignment.status}
-                          </Badge>
-                          <Button size="sm">
-                            View Details
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="profile" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Profile Information</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-                        <User className="h-8 w-8 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold">John Doe</h3>
-                        <p className="text-sm text-muted-foreground">john.doe@example.com</p>
-                        <p className="text-sm text-muted-foreground">+91 9876543210</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex gap-4">
-                      <Button>Edit Profile</Button>
-                      <Button variant="outline">Change Password</Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <p className="font-semibold">{loggedInUser.name}</p>
+              <p className="text-sm text-muted-foreground">{loggedInUser.email}</p>
+            </div>
+            <Button variant="ghost" size="icon" onClick={logout}>
+              <LogOut className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
-      </section>
-      
-      <Footer />
+      </div>
+
+      <div className="max-w-7xl mx-auto p-6 space-y-6">
+        {/* Welcome Section */}
+        <div className="space-y-2">
+          <h2 className="text-3xl font-bold">Welcome back, {loggedInUser.name.split(' ')[0]}!</h2>
+          <p className="text-muted-foreground">
+            Track your progress and continue your coding journey
+          </p>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {/* Test Status */}
+          <Card className="shadow-md">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <FileText className="h-4 w-4 text-primary" />
+                Test Status
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {getTestStatusBadge()}
+              {loggedInUser.status !== "new" && (
+                <p className="text-sm text-muted-foreground mt-1">Score: {loggedInUser.testScore}%</p>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Payment */}
+          <Card className="shadow-md">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <CreditCard className="h-4 w-4 text-accent" />
+                Payment
+              </CardTitle>
+            </CardHeader>
+            <CardContent>{getPaymentStatusBadge()}</CardContent>
+          </Card>
+
+          {/* Classes */}
+          <Card className="shadow-md">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <BookOpen className="h-4 w-4 text-success" />
+                Classes
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">{user.internshipDetails.classesCompleted}</p>
+              <p className="text-sm text-muted-foreground">
+                of {user.internshipDetails.totalClasses}
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Project */}
+          <Card className="shadow-md">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <Award className="h-4 w-4 text-warning" />
+                Project
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Badge
+                variant={user.internshipDetails.projectSubmitted ? 'default' : 'secondary'}
+              >
+                {user.internshipDetails.projectSubmitted ? 'Submitted' : 'Pending'}
+              </Badge>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Action */}
+        {nextAction && (
+          <Card className="shadow-elegant border-2 border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <PlayCircle className="h-5 w-5 text-primary" />
+                {nextAction.title}
+              </CardTitle>
+              <CardDescription>{nextAction.description}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button
+                variant={nextAction.variant}
+                size="lg"
+                onClick={nextAction.action}
+                className="w-full sm:w-auto"
+              >
+                {nextAction.buttonText}
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Internship Progress */}
+        {user.paymentStatus === 'completed' && (
+          <Card className="shadow-md">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BookOpen className="h-5 w-5 text-primary" />
+                Internship Progress
+              </CardTitle>
+              <CardDescription>Your learning journey overview</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Overall Progress</span>
+                  <span>{getProgressPercentage()}%</span>
+                </div>
+                <Progress value={getProgressPercentage()} className="h-2" />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                <div className="p-4 rounded-lg bg-muted/50">
+                  <p className="text-2xl font-bold text-primary">
+                    {user.internshipDetails.duration}
+                  </p>
+                  <p className="text-sm text-muted-foreground">Duration</p>
+                </div>
+                <div className="p-4 rounded-lg bg-muted/50">
+                  <p className="text-2xl font-bold text-accent">
+                    {user.internshipDetails.totalClasses - user.internshipDetails.classesCompleted}
+                  </p>
+                  <p className="text-sm text-muted-foreground">Classes Remaining</p>
+                </div>
+                <div className="p-4 rounded-lg bg-muted/50">
+                  <p className="text-2xl font-bold text-success">
+                    {user.internshipDetails.startDate
+                      ? new Date(user.internshipDetails.startDate).toLocaleDateString()
+                      : 'Not Started'}
+                  </p>
+                  <p className="text-sm text-muted-foreground">Start Date</p>
+                </div>
+              </div>
+
+              <Button variant="outline" className="w-full" onClick={() => navigate('/program')}>
+                View Full Program Details
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 };

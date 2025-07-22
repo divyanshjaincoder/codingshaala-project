@@ -50,7 +50,7 @@ const Header = () => {
           {/* CTA Button */}
           <div className="hidden md:flex items-center space-x-4">
             <Button variant="outline" asChild>
-              <Link to="/login">Login</Link>
+              <Link to="/LoginForm">Login</Link>
             </Button>
             <Button asChild>
               <Link to="/courses">Explore Courses</Link>
