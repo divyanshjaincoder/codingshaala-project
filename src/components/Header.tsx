@@ -13,7 +13,7 @@ const Header = () => {
     { name: "All Courses", href: "/courses" },
     { name: "Internship", href: "/internship" },
     { name: "Dashboard", href: "/dashboard" },
-    { name: "Login", href: "/login" },
+    { name: "Login", href: "/LoginForm" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -86,7 +86,7 @@ const Header = () => {
               ))}
               <div className="flex flex-col space-y-2 pt-4">
                 <Button variant="outline" asChild>
-                  <Link to="/login">Login</Link>
+                  <Link to="/LoginForm">Login</Link>
                 </Button>
                 <Button asChild>
                   <Link to="/courses">Explore Courses</Link>

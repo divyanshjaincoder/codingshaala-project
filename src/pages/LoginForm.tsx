@@ -5,17 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { BookOpen, Code2, Users } from 'lucide-react';
 import axios from 'axios'
 
 const LoginForm = () => {
-  const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate(); // <-- NEW
 
@@ -58,15 +55,7 @@ const LoginForm = () => {
 };
 
 
-  const fillSampleCredentials = (userIndex: number) => {
-    const sampleEmails = [
-      'student1@example.com',
-      'student2@example.com', 
-      'student3@example.com'
-    ];
-    setEmail(sampleEmails[userIndex]);
-    setPassword('password123');
-  };
+ 
 
   return (
     <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
@@ -125,17 +114,7 @@ const LoginForm = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  required
-                />
-              </div> */}
+             
                <div className="space-y-2">
                 <Label htmlFor="phone">Phone</Label>
                 <Input
@@ -169,37 +148,7 @@ const LoginForm = () => {
               </Button>
             </form>
 
-            <div className="mt-6 pt-6 border-t">
-              <p className="text-sm text-muted-foreground mb-3 text-center">
-                Test with sample accounts:
-              </p>
-              <div className="grid gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => fillSampleCredentials(0)}
-                  className="justify-start text-xs"
-                >
-                  Student 1 (Test Not Taken)
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => fillSampleCredentials(1)}
-                  className="justify-start text-xs"
-                >
-                  Student 2 (Test Passed, Paid)
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => fillSampleCredentials(2)}
-                  className="justify-start text-xs"
-                >
-                  Student 3 (Test Failed)
-                </Button>
-              </div>
-            </div>
+            
           </CardContent>
         </Card>
       </div>
