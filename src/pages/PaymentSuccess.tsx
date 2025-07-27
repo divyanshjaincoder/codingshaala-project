@@ -32,7 +32,7 @@ const PaymentSuccess = () => {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Amount Paid:</span>
-                  <span className="font-semibold text-green-600">₹2,500</span>
+                  <span className="font-semibold text-green-600">₹2,499</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Transaction ID:</span>
@@ -40,7 +40,7 @@ const PaymentSuccess = () => {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Start Date:</span>
-                  <span className="font-semibold">January 27, 2024</span>
+                  <span className="font-semibold">July 26, 2025</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Duration:</span>
@@ -75,15 +75,11 @@ const PaymentSuccess = () => {
                 <ul className="space-y-3">
                   <li className="flex items-center space-x-3">
                     <ArrowRight className="h-4 w-4 text-primary" />
-                    <span>Check your email for course materials and joining instructions</span>
-                  </li>
-                  <li className="flex items-center space-x-3">
-                    <ArrowRight className="h-4 w-4 text-primary" />
                     <span>Join the WhatsApp group for updates and announcements</span>
                   </li>
                   <li className="flex items-center space-x-3">
                     <ArrowRight className="h-4 w-4 text-primary" />
-                    <span>Attend the orientation session on January 27, 2024</span>
+                    <span>Attend the orientation session on July 26, 2025</span>
                   </li>
                   <li className="flex items-center space-x-3">
                     <ArrowRight className="h-4 w-4 text-primary" />

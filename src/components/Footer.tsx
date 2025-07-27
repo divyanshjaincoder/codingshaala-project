@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Mail, Phone } from "lucide-react";
+import CodingShaalaLogo from "../assets/codingshaala.png"
 
 const Footer = () => {
   const quickLinks = [
@@ -28,10 +29,9 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                <span className="text-primary font-bold text-sm">CS</span>
+              <div className="bg-white px-1 pr-2 rounded-lg flex items-center justify-center">
+                <img className="lg:h-[7vh] h-[6vh] object-fit-cover" src={CodingShaalaLogo} alt="" />
               </div>
-              <span className="text-2xl font-bold">CodingShaala</span>
             </div>
             <p className="text-sm text-primary-foreground/80">
               Empowering the next generation of developers with industry-relevant skills and practical experience.

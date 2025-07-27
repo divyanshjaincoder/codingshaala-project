@@ -29,12 +29,25 @@ import mernCourse from "@/assets/mern-course.jpg";
 import dataAnalytics from "@/assets/data-analytics-course.jpg";
 import mobileApp from "@/assets/mobile-app-course.jpg";
 import aiMl from "@/assets/ai-ml-course.jpg";
-import pythonBackend from "@/assets/python-backend-course.jpg";
 import nodejsBackend from "@/assets/nodejs-backend-course.jpg";
 import codingshaalLogo from "@/assets/codingshaala-logo.png";
+import { useEffect } from "react";
 
 const Index = () => {
+  useEffect(() => {
+  window.scrollTo(0, 0);
+}, []);
   const courses = [
+    {
+  title: "JavaScript Programming - 15 Days Live Program",
+  description: "Master core JavaScript concepts, logic building, and practical coding with live sessions in just 15 days.",
+  duration: "15 Days",
+  students: "200+",
+  level: "Online Live Classes",
+  price: "₹2,999",
+  image: 'http://knowitgetit.com/wp-content/uploads/2023/05/javascripts-basics.png', // Replace with your actual image import or URL
+  slug: "javascript-15days"
+},
     {
       title: "MERN Stack Development",
       description: "Master full-stack development with MongoDB, Express.js, React, and Node.js. Build modern web applications from scratch.",
@@ -75,16 +88,7 @@ const Index = () => {
       image: aiMl,
       slug: "ai-ml"
     },
-    {
-      title: "Backend Development (Python)",
-      description: "Master backend development with Python, Django, Flask, and database management.",
-      duration: "3-4 months",
-      students: "350+",
-      level: "Intermediate",
-      price: "₹14,000",
-      image: pythonBackend,
-      slug: "python-backend"
-    },
+    
     {
       title: "Backend Development (Node.js)",
       description: "Build scalable backend systems with Node.js, Express, and modern database technologies.",

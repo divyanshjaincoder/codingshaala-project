@@ -1,109 +1,77 @@
-
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // <-- NEW
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
-import { BookOpen, Code2, Users } from 'lucide-react';
-import axios from 'axios'
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // <-- NEW
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { BookOpen, Code2, Users } from "lucide-react";
+import axios from "axios";
+import { useAuth } from "@/contexts/UserAuthContext";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const LoginForm = () => {
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate(); // <-- NEW
+  const { updateUser } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsLoading(true);
+    e.preventDefault();
+    setIsLoading(true);
 
-  // Normalize the phone number
-  const normalizedPhone = phone.replace(/^(\+91|91|0)/, '');
+    // Normalize the phone number
+    const normalizedPhone = phone.replace(/^(\+91|91|0)/, "");
 
-  try {
-    const success = await axios.post('https://codingshaala-backend.onrender.com/api/users/login', {
-      phone: normalizedPhone,
-      password: password
-    });
+    try {
+      const success = await axios.post(
+        "https://codingshaala-backend.onrender.com/api/users/login",
+        {
+          phone: normalizedPhone,
+          password: password,
+        }
+      );
 
-    if (success) {
+      if (success) {
+        toast({
+          title: "Login Successful",
+          description: "Welcome to CodingShaala!",
+        });
+
+        console.log(success.data.user);
+        updateUser(success.data.user); // ✅ now it updates React state and localStorage
+        navigate("/dashboard");
+      } else {
+        toast({
+          title: "Login Failed",
+          description: "Invalid email or password.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
       toast({
-        title: "Login Successful",
-        description: "Welcome to CodingShaala!",
-      });
-      localStorage.setItem('user', JSON.stringify(success.data.user));
-      navigate('/dashboard');
-    } else {
-      toast({
-        title: "Login Failed",
-        description: "Invalid email or password.",
+        title: "Error",
+        description: "Something went wrong. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    toast({
-      title: "Error",
-      description: "Something went wrong. Please try again.",
-      variant: "destructive",
-    });
-  } finally {
-    setIsLoading(false);
-  }
-};
-
-
- 
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
-      <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-8 items-center">
-        {/* Hero Section */}
-        <div className="space-y-8 text-center lg:text-left">
-          <div className="space-y-4">
-            <h1 className="text-4xl lg:text-6xl font-bold gradient-text">
-              CodingShaala
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-md mx-auto lg:mx-0">
-              Transform your coding skills with our comprehensive internship program
-            </p>
-          </div>
-
-          <div className="grid gap-6 max-w-md mx-auto lg:mx-0">
-            <div className="flex items-center gap-4 p-4 rounded-lg bg-card border glass-effect">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <Code2 className="h-6 w-6 text-primary" />
-              </div>
-              <div className="text-left">
-                <h3 className="font-semibold">Live Projects</h3>
-                <p className="text-sm text-muted-foreground">Work on real-world applications</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 p-4 rounded-lg bg-card border glass-effect">
-              <div className="p-2 rounded-lg bg-accent/10">
-                <Users className="h-6 w-6 text-accent" />
-              </div>
-              <div className="text-left">
-                <h3 className="font-semibold">Expert Mentorship</h3>
-                <p className="text-sm text-muted-foreground">One-on-one guidance from industry experts</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 p-4 rounded-lg bg-card border glass-effect">
-              <div className="p-2 rounded-lg bg-success/10">
-                <BookOpen className="h-6 w-6 text-success" />
-              </div>
-              <div className="text-left">
-                <h3 className="font-semibold">Certification</h3>
-                <p className="text-sm text-muted-foreground">Industry-recognized certificate</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
+    <div className="bg-gradient-subtle flex flex-col">
+      <Header ></Header>
+      <div className="w-full py-10 flex items-center">
         {/* Login Form */}
         <Card className="w-full max-w-md mx-auto shadow-elegant">
           <CardHeader className="text-center">
@@ -114,8 +82,7 @@ const LoginForm = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-             
-               <div className="space-y-2">
+              <div className="space-y-2">
                 <Label htmlFor="phone">Phone</Label>
                 <Input
                   id="phone"
@@ -140,18 +107,17 @@ const LoginForm = () => {
 
               <Button
                 type="submit"
-                variant="gradient"
-                className="w-full"
+                
+                className="w-full bg-blue-600"
                 disabled={isLoading}
               >
                 {isLoading ? "Logging in..." : "Login"}
               </Button>
             </form>
-
-            
           </CardContent>
         </Card>
       </div>
+      <Footer></Footer>
     </div>
   );
 };

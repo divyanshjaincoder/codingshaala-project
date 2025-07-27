@@ -2,11 +2,13 @@ import React from 'react';
 import axios from 'axios';
 import { load } from "@cashfreepayments/cashfree-js";
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/UserAuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import CodingShaalaLogo from "../assets/codingshaala.png"
+
 import {
   BookOpen,
   Clock,
@@ -20,8 +22,9 @@ import {
 } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
-  const {  logout } = useAuth();
-  const loggedInUser = JSON.parse(localStorage.getItem("user"))
+  const { user, logout } = useAuth();
+  const loggedInUser = user
+  console.log(loggedInUser)
   const navigate = useNavigate();
 
   // ✅ ADD createOrder FUNCTION
@@ -110,11 +113,12 @@ const Dashboard: React.FC = () => {
         description: 'You passed! Complete payment to start your internship',
         action: createOrder, // ✅ USE createOrder function
         buttonText: 'Pay Now',
+        
         variant: 'gradient' as const,
       };
     }
 
-    if (loggedInUser?.paymentStatus === 'completed') {
+    if (loggedInUser?.status === 'paid') {
       return {
         title: 'Continue Learning',
         description: 'Access your course materials and track progress',
@@ -134,9 +138,9 @@ const Dashboard: React.FC = () => {
       {/* Header */}
       <div className="bg-card border-b glass-effect sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold gradient-text">CodingShaala</h1>
-            <Badge variant="outline">Student Portal</Badge>
+          <div className="flex flex-col items-center ">
+            <img className="h-[5vh] object-fit-cover" src={CodingShaalaLogo} alt="" />
+            <Badge variant="outline">Student Portal</Badge> 
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right">

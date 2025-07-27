@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
   courseName: { type: String, default: "MERN Internship" }, // or JS/Python
   startDate: { type: Date },
   classesAttended: { type: Number, default: 0 },
-  totalClasses: { type: Number, default: 30 },
+  totalClasses: { type: Number, default: 14 },
 
   // Final Project
   projectLink: { type: String },

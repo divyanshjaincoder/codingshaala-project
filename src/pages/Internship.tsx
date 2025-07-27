@@ -16,8 +16,12 @@ import {
   Phone,
   Mail
 } from "lucide-react";
+import { useEffect } from "react";
 
 const Internship = () => {
+  useEffect(() => {
+  window.scrollTo(0, 0);
+}, []);
   const features = [
     {
       icon: <Clock className="h-6 w-6 text-primary" />,
@@ -52,23 +56,65 @@ const Internship = () => {
   ];
 
   const syllabus = [
-    {
-      week: "Week 1-2",
-      topics: ["JavaScript Fundamentals", "ES6+ Features", "Asynchronous Programming", "DOM Manipulation"]
-    },
-    {
-      week: "Week 3-4",
-      topics: ["React.js Basics", "Components & Props", "State Management", "Hooks"]
-    },
-    {
-      week: "Week 5-6",
-      topics: ["Node.js & Express", "RESTful APIs", "Database Integration", "Authentication"]
-    },
-    {
-      week: "Week 7-8",
-      topics: ["MongoDB", "Full-Stack Integration", "Deployment", "Project Development"]
-    }
-  ];
+  {
+    week: "Week 1-2",
+    title: "Frontend with React.js",
+    topics: [
+      "Introduction to React: What & Why?",
+      "Project setup with Vite + Tailwind CSS",
+      "Understanding JSX & Functional Components",
+      "Props & Component Reusability",
+      "State & Events Handling",
+      "React Hooks: useState, useEffect",
+      "Form Handling in React",
+      "Conditional Rendering & Lists",
+      "Practical Assignment: Build a Mini Portfolio Website"
+    ]
+  },
+  {
+    week: "Week 3-4",
+    title: "Advanced React + State Management",
+    topics: [
+      "Routing using React Router v6",
+      "Global State using Context API",
+      "Custom Hooks and Component Lifecycle",
+      "React Forms with Validation (Formik + Yup)",
+      "API Integration using Axios/Fetch",
+      "Authentication UI: Login/Signup flows",
+      "UI Libraries: Shadcn/UI or Material UI",
+      "Live Assignment: Build a Mentor Listing App"
+    ]
+  },
+  {
+    week: "Week 5-6",
+    title: "Backend with Node.js + Express",
+    topics: [
+      "Intro to Node.js and Express.js",
+      "Creating REST APIs with CRUD operations",
+      "Connecting with MongoDB using Mongoose",
+      "Authentication: JWT-based login/signup",
+      "Role-based Routing: Admin, Mentor, Parent",
+      "Error Handling and Middleware in Express",
+      "Deploying Backend APIs to Render/Hostinger",
+      "Assignment: Build Mentor & Class APIs"
+    ]
+  },
+  {
+    week: "Week 7-8",
+    title: "Full-Stack Integration & Deployment",
+    topics: [
+      "Connecting React with Backend API",
+      "File Uploads (Multer + Cloudinary)",
+      "Dynamic Dashboards (Mentor/Parent/Admin)",
+      "Real-time Chat with Socket.io (Basics)",
+      "Using Exotel/OTP Gateways for Verification",
+      "Environment Configuration & .env Setup",
+      "Full-stack Deployment: Netlify + Render",
+      "Final Project: Class Management Web App"
+    ]
+  }
+];
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -87,7 +133,7 @@ const Internship = () => {
               <Button size="lg" variant="secondary" asChild>
                 <Link to="/booking">Apply Now - ₹2,500</Link>
               </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-primary" asChild>
+              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white text-primary" asChild>
                 <Link to="/courses">View All Courses</Link>
               </Button>
             </div>
@@ -234,8 +280,8 @@ const Internship = () => {
             <Card className="text-center p-6">
               <Mail className="h-8 w-8 text-primary mx-auto mb-4" />
               <h3 className="font-semibold mb-2">Email Us</h3>
-              <a href="mailto:info@codingshaala.com" className="text-primary hover:underline">
-                www.codingshaala.com
+              <a href="mailto:codingshaala@gmail.com" className="text-primary hover:underline">
+                codingshaala@gmail.com
               </a>
             </Card>
           </div>

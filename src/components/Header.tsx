@@ -12,20 +12,18 @@ const Header = () => {
     { name: "Home", href: "/" },
     { name: "All Courses", href: "/courses" },
     { name: "Internship", href: "/internship" },
-    { name: "Dashboard", href: "/dashboard" },
-    { name: "Login", href: "/LoginForm" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
     <header className="bg-background border-b border-border sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-4 ">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <div className="w-20 h-20  rounded-lg flex items-center justify-center">
-              <img className="" src={CodingShaalaLogo} alt="" />
+            <div className="w-auto h-20  rounded-lg flex items-center justify-center">
+              <img className="h-[7vh] object-fit-cover" src={CodingShaalaLogo} alt="" />
             </div>
             <span className="text-2xl font-bold text-primary"></span>
           </Link>
@@ -36,7 +34,7 @@ const Header = () => {
               <Link
                 key={item.name}
                 to={item.href}
-                className={`text-sm font-medium transition-colors hover:text-primary ${
+                className={`text-md font-medium transition-colors hover:text-primary ${
                   isActive(item.href) 
                     ? "text-primary border-b-2 border-primary pb-1" 
                     : "text-muted-foreground"
