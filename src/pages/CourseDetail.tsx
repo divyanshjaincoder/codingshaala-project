@@ -26,113 +26,114 @@ const CourseDetail = () => {
   const { slug } = useParams();
 
   // This would typically come from an API or database
-  const courseData = {
-    title: "JavaScript Programming - 15 Days Live Program",
-    description:
-      "Learn JavaScript from scratch with live interactive classes. Focus on logic building, core concepts, and practical coding exercises designed for beginners.",
-    image:
-      "http://knowitgetit.com/wp-content/uploads/2023/05/javascripts-basics.png", // replace with actual image import or URL
-    price: "₹2999",
-    duration: "15 Days",
-    students: "200+",
-    level: "Beginner to Intermediate",
-    rating: 4.7,
-    reviews: 90,
-    instructor: "Pradhumn Sir",
-    instructorExp: "3.5+ years in web development & training",
-    features: [
-      "Live interactive sessions",
-      "Daily coding challenges",
-      "Certificate of completion",
-      "Beginner-friendly content",
-      "Logic building focus",
-      "Live doubt-solving",
-      "Hands-on practice",
-      "Affordable pricing",
-    ],
-    curriculum: [
-      {
-        module: "Day 1: JavaScript Introduction",
-        topics: ["JS History", "Setup & Syntax", "Variables & Data Types"],
-        duration: "1 day",
-      },
-      {
-        module: "Day 2: Operators & Expressions",
-        topics: ["Arithmetic", "Assignment", "Comparison", "Logical Operators"],
-        duration: "1 day",
-      },
-      {
-        module: "Day 3: Control Flow",
-        topics: ["if-else", "switch", "ternary operator"],
-        duration: "1 day",
-      },
-      {
-        module: "Day 4: Loops",
-        topics: ["for", "while", "do-while", "nested loops"],
-        duration: "1 day",
-      },
-      {
-        module: "Day 5: Functions",
-        topics: [
-          "Function declaration",
-          "Parameters",
-          "Return values",
-          "Arrow functions",
-        ],
-        duration: "1 day",
-      },
-      {
-        module: "Day 6-7: Arrays",
-        topics: [
-          "Array basics",
-          "Array methods (map, filter, reduce)",
-          "Looping through arrays",
-        ],
-        duration: "2 days",
-      },
-      {
-        module: "Day 8-9: Objects",
-        topics: [
-          "Object literals",
-          "Accessing properties",
-          "Nested objects",
-          "Object methods",
-        ],
-        duration: "2 days",
-      },
-      {
-        module: "Day 10: DOM Basics",
-        topics: ["DOM selection", "DOM manipulation", "Event listeners"],
-        duration: "1 day",
-      },
-      {
-        module: "Day 11: Events & Form Handling",
-        topics: ["click, input, submit events", "basic form validation"],
-        duration: "1 day",
-      },
-      {
-        module: "Day 12: Mini Project",
-        topics: [
-          "Build a small project using DOM & logic (e.g., To-Do app or Calculator)",
-        ],
-        duration: "1 day",
-      },
-      {
-        module: "Day 13-14: Logic Building",
-        topics: [
-          "Practice logical questions",
-          "Loops + conditions",
-          "Interview-style problems",
-        ],
-        duration: "2 days",
-      },
-      {
-        module: "Day 15: Final Test + Feedback",
-        topics: ["Final assessment", "Feedback & Q&A"],
-        duration: "1 day",
-      },
-    ],
-  };
+  const courseData = JSON.parse(localStorage.getItem('courseDetail'))
+  // const courseData = {
+  //   title: "JavaScript Programming - 15 Days Live Program",
+  //   description:
+  //     "Learn JavaScript from scratch with live interactive classes. Focus on logic building, core concepts, and practical coding exercises designed for beginners.",
+  //   image:
+  //     "http://knowitgetit.com/wp-content/uploads/2023/05/javascripts-basics.png", // replace with actual image import or URL
+  //   price: "₹2999",
+  //   duration: "15 Days",
+  //   students: "200+",
+  //   level: "Beginner to Intermediate",
+  //   rating: 4.7,
+  //   reviews: 90,
+  //   instructor: "Pradhumn Sir",
+  //   instructorExp: "3.5+ years in web development & training",
+  //   features: [
+  //     "Live interactive sessions",
+  //     "Daily coding challenges",
+  //     "Certificate of completion",
+  //     "Beginner-friendly content",
+  //     "Logic building focus",
+  //     "Live doubt-solving",
+  //     "Hands-on practice",
+  //     "Affordable pricing",
+  //   ],
+  //   curriculum: [
+  //     {
+  //       module: "Day 1: JavaScript Introduction",
+  //       topics: ["JS History", "Setup & Syntax", "Variables & Data Types"],
+  //       duration: "1 day",
+  //     },
+  //     {
+  //       module: "Day 2: Operators & Expressions",
+  //       topics: ["Arithmetic", "Assignment", "Comparison", "Logical Operators"],
+  //       duration: "1 day",
+  //     },
+  //     {
+  //       module: "Day 3: Control Flow",
+  //       topics: ["if-else", "switch", "ternary operator"],
+  //       duration: "1 day",
+  //     },
+  //     {
+  //       module: "Day 4: Loops",
+  //       topics: ["for", "while", "do-while", "nested loops"],
+  //       duration: "1 day",
+  //     },
+  //     {
+  //       module: "Day 5: Functions",
+  //       topics: [
+  //         "Function declaration",
+  //         "Parameters",
+  //         "Return values",
+  //         "Arrow functions",
+  //       ],
+  //       duration: "1 day",
+  //     },
+  //     {
+  //       module: "Day 6-7: Arrays",
+  //       topics: [
+  //         "Array basics",
+  //         "Array methods (map, filter, reduce)",
+  //         "Looping through arrays",
+  //       ],
+  //       duration: "2 days",
+  //     },
+  //     {
+  //       module: "Day 8-9: Objects",
+  //       topics: [
+  //         "Object literals",
+  //         "Accessing properties",
+  //         "Nested objects",
+  //         "Object methods",
+  //       ],
+  //       duration: "2 days",
+  //     },
+  //     {
+  //       module: "Day 10: DOM Basics",
+  //       topics: ["DOM selection", "DOM manipulation", "Event listeners"],
+  //       duration: "1 day",
+  //     },
+  //     {
+  //       module: "Day 11: Events & Form Handling",
+  //       topics: ["click, input, submit events", "basic form validation"],
+  //       duration: "1 day",
+  //     },
+  //     {
+  //       module: "Day 12: Mini Project",
+  //       topics: [
+  //         "Build a small project using DOM & logic (e.g., To-Do app or Calculator)",
+  //       ],
+  //       duration: "1 day",
+  //     },
+  //     {
+  //       module: "Day 13-14: Logic Building",
+  //       topics: [
+  //         "Practice logical questions",
+  //         "Loops + conditions",
+  //         "Interview-style problems",
+  //       ],
+  //       duration: "2 days",
+  //     },
+  //     {
+  //       module: "Day 15: Final Test + Feedback",
+  //       topics: ["Final assessment", "Feedback & Q&A"],
+  //       duration: "1 day",
+  //     },
+  //   ],
+  // };
 
   return (
     <div className="min-h-screen bg-background">

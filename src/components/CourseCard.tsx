@@ -23,8 +23,9 @@ const CourseCard = ({
   level, 
   price, 
   image, 
-  slug 
-}: CourseCardProps) => {
+  slug,
+  course 
+}) => {
   return (
     <Card className="group hover:shadow-card transition-all duration-300 transform hover:-translate-y-1">
       <CardHeader className="p-0">
@@ -64,7 +65,7 @@ const CourseCard = ({
         
         <div className="flex items-center justify-between">
           <div className="text-2xl font-bold text-primary">{price}</div>
-          <Button asChild>
+          <Button onClick={()=> localStorage.setItem('courseDetail', JSON.stringify(course))} asChild>
             <Link to={`/course/${slug}`}>Learn More</Link>
           </Button>
         </div>
