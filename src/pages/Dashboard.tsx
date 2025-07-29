@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { load } from "@cashfreepayments/cashfree-js";
 import { useNavigate } from 'react-router-dom';
@@ -24,9 +24,19 @@ import {
 const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const loggedInUser = user
-  console.log(loggedInUser)
+  const [userDetail, setUserDetail] = useState(null)
+  const getUserDetail = async ()=>{
+    const response = await axios.get(`https://codingshaala-backend.onrender.com/api/users/${loggedInUser._id}`)
+    setUserDetail(response.data)
+    console.log(response.data)
+  }
+  useEffect(()=>{
+     getUserDetail()
+  }, [])
+  
+  
   const navigate = useNavigate();
-
+  
   // ✅ ADD createOrder FUNCTION
   const createOrder = async () => {
   try {
@@ -35,7 +45,7 @@ const Dashboard: React.FC = () => {
       {
         amount: 2499,
         customerId: `codingshaala${Date.now()}`,
-        customerPhone: loggedInUser.phone,
+        customerPhone: userDetail.phone,
       }
     );
     const data = response.data;
@@ -57,13 +67,13 @@ const Dashboard: React.FC = () => {
 };
 
   const getTestStatusBadge = () => {
-    switch (loggedInUser?.status) {
+    switch (userDetail?.status) {
       case 'new':
         return <Badge variant="secondary" className="gap-1"><Clock className="h-3 w-3" />Not Started</Badge>;
       case 'in_progress':
         return <Badge variant="destructive" className="gap-1"><PlayCircle className="h-3 w-3" />In Progress</Badge>;
       case 'completed':
-        return loggedInUser?.status === 'passed'
+        return userDetail?.status === 'passed'
           ? <Badge className="bg-success hover:bg-success/80 gap-1"><CheckCircle className="h-3 w-3" />Passed</Badge>
           : <Badge variant="destructive" className="gap-1"><XCircle className="h-3 w-3" />Failed</Badge>;
       default:
@@ -72,19 +82,19 @@ const Dashboard: React.FC = () => {
   };
 
   const getPaymentStatusBadge = () => {
-    return loggedInUser?.status === 'completed'
+    return userDetail?.status === 'completed'
       ? <Badge className="bg-success hover:bg-success/80 gap-1"><CheckCircle className="h-3 w-3" />Paid</Badge>
       : <Badge variant="secondary" className="gap-1"><CreditCard className="h-3 w-3" />Pending</Badge>;
   };
 
   const getProgressPercentage = () => {
     return Math.round(
-      (loggedInUser?.internshipDetails?.classesCompleted / loggedInUser?.internshipDetails?.totalClasses) * 100
+      (userDetail?.internshipDetails?.classesCompleted / userDetail?.internshipDetails?.totalClasses) * 100
     );
   };
 
   const getNextAction = () => {
-    if (loggedInUser?.status === 'new') {
+    if (userDetail?.status === 'new') {
       return {
         title: 'Take Entrance Test',
         description: 'Complete the assessment to join our internship program',
@@ -94,7 +104,7 @@ const Dashboard: React.FC = () => {
       };
     }
 
-    if (loggedInUser?.status === 'test_failed') {
+    if (userDetail?.status === 'test_failed') {
       return {
         title: 'Test Results',
         description: 'Unfortunately, you did not pass the entrance test',
@@ -105,8 +115,8 @@ const Dashboard: React.FC = () => {
     }
 
     if (
-      loggedInUser?.status === 'test_passed' &&
-      loggedInUser?.isPaid === false
+      userDetail?.status === 'test_passed' &&
+      userDetail?.isPaid === false
     ) {
       return {
         title: 'Complete Payment',
@@ -118,7 +128,7 @@ const Dashboard: React.FC = () => {
       };
     }
 
-    if (loggedInUser?.status === 'paid') {
+    if (userDetail?.status === 'paid') {
       return {
         title: 'Continue Learning',
         description: 'Access your course materials and track progress',
@@ -144,10 +154,10 @@ const Dashboard: React.FC = () => {
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right">
-              <p className="font-semibold">{loggedInUser?.name}</p>
-              <p className="text-sm text-muted-foreground">{loggedInUser?.email}</p>
+              <p className="font-semibold">{userDetail?.name}</p>
+              <p className="text-sm text-muted-foreground">{userDetail?.email}</p>
             </div>
-            <Button variant="ghost" size="icon" onClick={logout}>
+            <Button variant="ghost" size="icon" onClick={()=> {localStorage.removeItem("user") ;navigate('/')}}>
               <LogOut className="h-4 w-4" />
             </Button>
           </div>
@@ -157,7 +167,7 @@ const Dashboard: React.FC = () => {
       <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Welcome Section */}
         <div className="space-y-2">
-          <h2 className="text-3xl font-bold">Welcome back, {loggedInUser?.name.split(' ')[0]}!</h2>
+          <h2 className="text-3xl font-bold">Welcome back, {userDetail?.name.split(' ')[0]}!</h2>
           <p className="text-muted-foreground">
             Track your progress and continue your coding journey
           </p>
@@ -175,8 +185,8 @@ const Dashboard: React.FC = () => {
             </CardHeader>
             <CardContent>
               {getTestStatusBadge()}
-              {loggedInUser?.status !== "new" && (
-                <p className="text-sm text-muted-foreground mt-1">Score: {loggedInUser?.testScore}%</p>
+              {userDetail?.status !== "new" && (
+                <p className="text-sm text-muted-foreground mt-1">Score: {userDetail?.testScore}%</p>
               )}
             </CardContent>
           </Card>
@@ -220,9 +230,9 @@ const Dashboard: React.FC = () => {
             </CardHeader>
             <CardContent>
               <Badge
-                variant={loggedInUser?.internshipDetails?.projectSubmitted ? 'default' : 'secondary'}
+                variant={userDetail?.internshipDetails?.projectSubmitted ? 'default' : 'secondary'}
               >
-                {loggedInUser?.internshipDetails?.projectSubmitted ? 'Submitted' : 'Pending'}
+                {userDetail?.internshipDetails?.projectSubmitted ? 'Submitted' : 'Pending'}
               </Badge>
             </CardContent>
           </Card>
@@ -252,7 +262,7 @@ const Dashboard: React.FC = () => {
         )}
 
         {/* Internship Progress */}
-        {loggedInUser?.paymentStatus === 'completed' && (
+        {userDetail?.paymentStatus === 'completed' && (
           <Card className="shadow-md">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -279,14 +289,14 @@ const Dashboard: React.FC = () => {
                 </div>
                 <div className="p-4 rounded-lg bg-muted/50">
                   <p className="text-2xl font-bold text-accent">
-                    {loggedInUser?.internshipDetails?.totalClasses - loggedInUser?.internshipDetails?.classesCompleted}
+                    {userDetail?.internshipDetails?.totalClasses - userDetail?.internshipDetails?.classesCompleted}
                   </p>
                   <p className="text-sm text-muted-foreground">Classes Remaining</p>
                 </div>
                 <div className="p-4 rounded-lg bg-muted/50">
                   <p className="text-2xl font-bold text-success">
-                    {loggedInUser?.internshipDetails.startDate
-                      ? new Date(loggedInUser?.internshipDetails?.startDate).toLocaleDateString()
+                    {userDetail?.internshipDetails.startDate
+                      ? new Date(userDetail?.internshipDetails?.startDate).toLocaleDateString()
                       : 'Not Started'}
                   </p>
                   <p className="text-sm text-muted-foreground">Start Date</p>

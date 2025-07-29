@@ -26,7 +26,7 @@ interface TestInterfaceProps {
   onNavigate: (page: string) => void;
 }
 
-const TestInterface: React.FC<TestInterfaceProps> = ({ onNavigate }) => {
+const TestInterface: React.FC<TestInterfaceProps> = ({ onNavigate, setUserDetail }) => {
   const navigate = useNavigate();
   const { user, updateUser } = useAuth();
   const { toast } = useToast();
