@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // <-- NEW
 import {
   Card,
@@ -67,6 +67,9 @@ const LoginForm = () => {
       setIsLoading(false);
     }
   };
+  useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
 
   return (
     <div className="bg-gradient-subtle flex flex-col">

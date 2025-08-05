@@ -62,65 +62,66 @@ export const testQuestions = [
   },
   {
     id: 6,
-    question: "Which of the following is the correct way to create a React component?",
+    question: "Which of the following is used to define a constant in JavaScript?",
     options: [
-      "function Component() { return <div>Hello</div>; }",
-      "create Component() { return <div>Hello</div>; }",
-      "component Component() { return <div>Hello</div>; }",
-      "class Component { return <div>Hello</div>; }"
+      "let",
+      "var",
+      "const",
+      "static"
     ],
-    correctAnswer: 0,
-    difficulty: "Medium"
+    correctAnswer: 2,
+    difficulty: "Easy"
   },
   {
     id: 7,
-    question: "What is the purpose of useState hook in React?",
+    question: "What will be the result of 2 + '2' in JavaScript?",
     options: [
-      "To fetch data from API",
-      "To manage component state",
-      "To handle side effects",
-      "To create components"
+      "4",
+      "'22'",
+      "NaN",
+      "Error"
     ],
     correctAnswer: 1,
     difficulty: "Medium"
   },
   {
     id: 8,
-    question: "What does CSS stand for?",
+    question: "Which function is used to convert a JSON string into a JavaScript object?",
     options: [
-      "Computer Style Sheets",
-      "Creative Style Sheets",
-      "Cascading Style Sheets",
-      "Colorful Style Sheets"
+      "JSON.parse()",
+      "JSON.stringify()",
+      "JSON.convert()",
+      "JSON.objectify()"
     ],
-    correctAnswer: 2,
-    difficulty: "Easy"
+    correctAnswer: 0,
+    difficulty: "Medium"
   },
   {
     id: 9,
-    question: "Which CSS property is used to change the text color?",
+    question: "What is the difference between '==' and '===' in JavaScript?",
     options: [
-      "text-color",
-      "font-color",
-      "color",
-      "text-style"
+      "No difference",
+      "'==' checks both value and type, '===' checks only value",
+      "'==' checks only value, '===' checks both value and type",
+      "Both are used for assignment"
     ],
     correctAnswer: 2,
-    difficulty: "Easy"
+    difficulty: "Hard"
   },
   {
     id: 10,
-    question: "What is the box model in CSS?",
+    question: "Which method is used to remove the last element from an array in JavaScript?",
     options: [
-      "A way to create boxes",
-      "A model that describes the rectangular boxes generated for elements",
-      "A method to style forms",
-      "A technique for responsive design"
+      "pop()",
+      "shift()",
+      "remove()",
+      "splice()"
     ],
-    correctAnswer: 1,
-    difficulty: "Medium"
+    correctAnswer: 0,
+    difficulty: "Easy"
   }
 ];
+
 
 // Internship program syllabus
 export const syllabus = [

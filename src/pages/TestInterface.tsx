@@ -26,7 +26,7 @@ interface TestInterfaceProps {
   onNavigate: (page: string) => void;
 }
 
-const TestInterface: React.FC<TestInterfaceProps> = ({ onNavigate, setUserDetail }) => {
+const TestInterface: React.FC<TestInterfaceProps> = ({ onNavigate }) => {
   const navigate = useNavigate();
   const { user, updateUser } = useAuth();
   const { toast } = useToast();
@@ -177,7 +177,6 @@ const TestInterface: React.FC<TestInterfaceProps> = ({ onNavigate, setUserDetail
                 <ArrowLeft className="h-4 w-4 mr-2" /> Back to Dashboard
               </Button>
               <Button
-                variant="gradient"
                 onClick={handleStartTest}
                 className="flex-1"
               >
@@ -290,7 +289,6 @@ const TestInterface: React.FC<TestInterfaceProps> = ({ onNavigate, setUserDetail
 
               {currentQuestion === testQuestions.length - 1 ? (
                 <Button
-                  variant="gradient"
                   onClick={handleSubmitTest}
                   disabled={
                     isSubmitting || getAnsweredCount() < testQuestions.length

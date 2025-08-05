@@ -7,7 +7,7 @@ const Footer = () => {
     { name: "Home", href: "/" },
     { name: "All Courses", href: "/courses" },
     { name: "Internship", href: "/internship" },
-    { name: "Dashboard", href: "/dashboard" },
+    { name: "Login", href: "/LoginForm" },
   ];
 
   const legalLinks = [
@@ -16,11 +16,7 @@ const Footer = () => {
     { name: "Return & Refund", href: "/refund" },
   ];
 
-  const supportLinks = [
-    { name: "Login", href: "/login" },
-    { name: "Payment Success", href: "/payment-success" },
-    { name: "Payment Failure", href: "/payment-failure" },
-  ];
+  
 
   return (
     <footer className="bg-primary text-primary-foreground">
@@ -51,8 +47,8 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <Mail className="h-4 w-4" />
-                <a href="mailto:info@codingshaala.com" className="text-sm hover:underline">
-                  www.codingshaala.com
+                <a href="mailto:codingshaala@gmail.com" className="text-sm hover:underline">
+                  codingshaala@gmail.com
                 </a>
               </div>
             </div>
@@ -93,7 +89,7 @@ const Footer = () => {
           </div>
 
           {/* Support Links */}
-          <div>
+          {/* <div>
             <h3 className="font-semibold mb-4">Support</h3>
             <ul className="space-y-2">
               {supportLinks.map((link) => (
@@ -107,12 +103,12 @@ const Footer = () => {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
         </div>
 
         <div className="border-t border-primary-foreground/20 mt-8 pt-8 text-center">
           <p className="text-sm text-primary-foreground/80">
-            © 2024 CodingShaala. All rights reserved.
+            © 2023 CodingShaala. All rights reserved.
           </p>
         </div>
       </div>

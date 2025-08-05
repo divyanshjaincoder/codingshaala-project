@@ -1,13 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { load } from "@cashfreepayments/cashfree-js";
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/UserAuthContext';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import CodingShaalaLogo from "../assets/codingshaala.png"
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/UserAuthContext";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import CodingShaalaLogo from "../assets/codingshaala.png";
 
 import {
   BookOpen,
@@ -19,122 +25,149 @@ import {
   PlayCircle,
   FileText,
   LogOut,
-} from 'lucide-react';
+} from "lucide-react";
 
 const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
-  const loggedInUser = user
-  const [userDetail, setUserDetail] = useState(null)
-  const getUserDetail = async ()=>{
-    const response = await axios.get(`https://codingshaala-backend.onrender.com/api/users/${loggedInUser._id}`)
-    setUserDetail(response.data)
-    console.log(response.data)
-  }
-  useEffect(()=>{
-     getUserDetail()
-  }, [])
-  
-  
+  const loggedInUser = user;
+  const [userDetail, setUserDetail] = useState(null);
+  const getUserDetail = async () => {
+    const response = await axios.get(
+      `https://codingshaala-backend.onrender.com/api/users/${loggedInUser._id}`
+    );
+    setUserDetail(response.data);
+    console.log(response.data);
+  };
+  useEffect(() => {
+    getUserDetail();
+  }, []);
+
   const navigate = useNavigate();
-  
+
   // ✅ ADD createOrder FUNCTION
   const createOrder = async () => {
-  try {
-    const response = await axios.post(
-      "https://codingshaala-backend.onrender.com/api/payment/create-order",
-      {
-        amount: 2499,
-        customerId: `codingshaala${Date.now()}`,
-        customerPhone: userDetail.phone,
-      }
-    );
-    const data = response.data;
-    console.log(data)
-    let cashfree = await load({
-      mode: "production",
-    });
-    
-    let checkoutOptions = {
+    try {
+      const response = await axios.post(
+        "https://codingshaala-backend.onrender.com/api/payment/create-order",
+        {
+          amount: 2499,
+          customerId: `codingshaala${Date.now()}`,
+          customerPhone: userDetail.phone,
+        }
+      );
+      const data = response.data;
+      console.log(data);
+      localStorage.setItem('order_id', data.order_id)
+      let cashfree = await load({
+        mode: "production",
+      });
+
+      let checkoutOptions = {
         paymentSessionId: data.payment_session_id,
         redirectTarget: "_self",
       };
       cashfree.checkout(checkoutOptions);
-    console.log(cashfree);
-  } catch (error) {
-    console.error(error.response?.data || error.message);
-    throw error;
-  }
-};
+      console.log(cashfree);
+    } catch (error) {
+      console.error(error.response?.data || error.message);
+      throw error;
+    }
+  };
 
   const getTestStatusBadge = () => {
     switch (userDetail?.status) {
-      case 'new':
-        return <Badge variant="secondary" className="gap-1"><Clock className="h-3 w-3" />Not Started</Badge>;
-      case 'in_progress':
-        return <Badge variant="destructive" className="gap-1"><PlayCircle className="h-3 w-3" />In Progress</Badge>;
-      case 'completed':
-        return userDetail?.status === 'passed'
-          ? <Badge className="bg-success hover:bg-success/80 gap-1"><CheckCircle className="h-3 w-3" />Passed</Badge>
-          : <Badge variant="destructive" className="gap-1"><XCircle className="h-3 w-3" />Failed</Badge>;
+      case "new":
+        return (
+          <Badge variant="secondary" className="gap-1">
+            <Clock className="h-3 w-3" />
+            Not Started
+          </Badge>
+        );
+      case "in_progress":
+        return (
+          <Badge variant="destructive" className="gap-1">
+            <PlayCircle className="h-3 w-3" />
+            In Progress
+          </Badge>
+        );
+      case "completed":
+        return userDetail?.status === "passed" ? (
+          <Badge className="bg-success hover:bg-success/80 gap-1">
+            <CheckCircle className="h-3 w-3" />
+            Passed
+          </Badge>
+        ) : (
+          <Badge variant="destructive" className="gap-1">
+            <XCircle className="h-3 w-3" />
+            Failed
+          </Badge>
+        );
       default:
         return null;
     }
   };
 
   const getPaymentStatusBadge = () => {
-    return userDetail?.status === 'completed'
-      ? <Badge className="bg-success hover:bg-success/80 gap-1"><CheckCircle className="h-3 w-3" />Paid</Badge>
-      : <Badge variant="secondary" className="gap-1"><CreditCard className="h-3 w-3" />Pending</Badge>;
+    return userDetail?.status === "completed" ? (
+      <Badge className="bg-success hover:bg-success/80 gap-1">
+        <CheckCircle className="h-3 w-3" />
+        Paid
+      </Badge>
+    ) : (
+      <Badge variant="secondary" className="gap-1">
+        <CreditCard className="h-3 w-3" />
+        Pending
+      </Badge>
+    );
   };
 
   const getProgressPercentage = () => {
     return Math.round(
-      (userDetail?.internshipDetails?.classesCompleted / userDetail?.internshipDetails?.totalClasses) * 100
+      (userDetail?.internshipDetails?.classesCompleted /
+        userDetail?.internshipDetails?.totalClasses) *
+        100
     );
   };
 
   const getNextAction = () => {
-    if (userDetail?.status === 'new') {
+    if (userDetail?.status === "new") {
       return {
-        title: 'Take Entrance Test',
-        description: 'Complete the assessment to join our internship program',
-        action: () => navigate('/testinterface'),
-        buttonText: 'Start Test',
-        variant: 'gradient' as const,
+        title: "Take Entrance Test",
+        description: "Complete the assessment to join our internship program",
+        action: () => navigate("/testinterface"),
+        buttonText: "Start Test",
+        variant: "gradient" as const,
       };
     }
 
-    if (userDetail?.status === 'test_failed') {
+    if (userDetail?.status === "test_failed") {
       return {
-        title: 'Test Results',
-        description: 'Unfortunately, you did not pass the entrance test',
-        action: () => navigate('/result'),
-        buttonText: 'View Results',
-        variant: 'outline' as const,
+        title: "Test Results",
+        description: "Unfortunately, you did not pass the entrance test",
+        action: () => navigate("/result"),
+        buttonText: "View Results",
+        variant: "outline" as const,
       };
     }
 
-    if (
-      userDetail?.status === 'test_passed' &&
-      userDetail?.isPaid === false
-    ) {
+    if (userDetail?.status === "test_passed" && userDetail?.isPaid === false) {
       return {
-        title: 'Complete Payment',
-        description: 'You passed! Complete payment to start your internship',
+        title: "Complete Payment",
+        description: "You passed! Complete payment to start your internship",
         action: createOrder, // ✅ USE createOrder function
-        buttonText: 'Pay Now',
-        
-        variant: 'gradient' as const,
+        buttonText: "Pay Now",
+
+        variant: "gradient" as const,
       };
     }
 
-    if (userDetail?.status === 'paid') {
+    if (userDetail?.status === "paid") {
       return {
-        title: 'Continue Learning',
-        description: 'Access your course materials and track progress',
-        action: () => navigate('/program'),
-        buttonText: 'View Program',
-        variant: 'gradient' as const,
+        title: "Continue Learning",
+        description: "Please wait for the schedule to be updated",
+        // action: () => navigate("/program"),
+        buttonText: "Waiting for schedule...",
+        variant: "gradient" as const,
       };
     }
 
@@ -142,22 +175,37 @@ const Dashboard: React.FC = () => {
   };
 
   const nextAction = getNextAction();
-
+  useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
   return (
     <div className="min-h-screen bg-gradient-subtle">
       {/* Header */}
       <div className="bg-card border-b glass-effect sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex flex-col items-center ">
-            <img className="h-[5vh] object-fit-cover" src={CodingShaalaLogo} alt="" />
-            <Badge variant="outline">Student Portal</Badge> 
+            <img
+              className="h-[5vh] object-fit-cover"
+              src={CodingShaalaLogo}
+              alt=""
+            />
+            <Badge variant="outline">Student Portal</Badge>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right">
               <p className="font-semibold">{userDetail?.name}</p>
-              <p className="text-sm text-muted-foreground">{userDetail?.email}</p>
+              <p className="text-sm text-muted-foreground">
+                {userDetail?.email}
+              </p>
             </div>
-            <Button variant="ghost" size="icon" onClick={()=> {localStorage.removeItem("user") ;navigate('/')}}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                localStorage.removeItem("user");
+                navigate("/");
+              }}
+            >
               <LogOut className="h-4 w-4" />
             </Button>
           </div>
@@ -167,7 +215,9 @@ const Dashboard: React.FC = () => {
       <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Welcome Section */}
         <div className="space-y-2">
-          <h2 className="text-3xl font-bold">Welcome back, {userDetail?.name.split(' ')[0]}!</h2>
+          <h2 className="text-3xl font-bold">
+            Welcome back, {userDetail?.name.split(" ")[0]}!
+          </h2>
           <p className="text-muted-foreground">
             Track your progress and continue your coding journey
           </p>
@@ -186,7 +236,9 @@ const Dashboard: React.FC = () => {
             <CardContent>
               {getTestStatusBadge()}
               {userDetail?.status !== "new" && (
-                <p className="text-sm text-muted-foreground mt-1">Score: {userDetail?.testScore}%</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Score: {userDetail?.testScore}%
+                </p>
               )}
             </CardContent>
           </Card>
@@ -230,9 +282,15 @@ const Dashboard: React.FC = () => {
             </CardHeader>
             <CardContent>
               <Badge
-                variant={userDetail?.internshipDetails?.projectSubmitted ? 'default' : 'secondary'}
+                variant={
+                  userDetail?.internshipDetails?.projectSubmitted
+                    ? "default"
+                    : "secondary"
+                }
               >
-                {userDetail?.internshipDetails?.projectSubmitted ? 'Submitted' : 'Pending'}
+                {userDetail?.internshipDetails?.projectSubmitted
+                  ? "Submitted"
+                  : "Pending"}
               </Badge>
             </CardContent>
           </Card>
@@ -262,7 +320,7 @@ const Dashboard: React.FC = () => {
         )}
 
         {/* Internship Progress */}
-        {userDetail?.paymentStatus === 'completed' && (
+        {userDetail?.paymentStatus === "completed" && (
           <Card className="shadow-md">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -289,21 +347,30 @@ const Dashboard: React.FC = () => {
                 </div>
                 <div className="p-4 rounded-lg bg-muted/50">
                   <p className="text-2xl font-bold text-accent">
-                    {userDetail?.internshipDetails?.totalClasses - userDetail?.internshipDetails?.classesCompleted}
+                    {userDetail?.internshipDetails?.totalClasses -
+                      userDetail?.internshipDetails?.classesCompleted}
                   </p>
-                  <p className="text-sm text-muted-foreground">Classes Remaining</p>
+                  <p className="text-sm text-muted-foreground">
+                    Classes Remaining
+                  </p>
                 </div>
                 <div className="p-4 rounded-lg bg-muted/50">
                   <p className="text-2xl font-bold text-success">
                     {userDetail?.internshipDetails.startDate
-                      ? new Date(userDetail?.internshipDetails?.startDate).toLocaleDateString()
-                      : 'Not Started'}
+                      ? new Date(
+                          userDetail?.internshipDetails?.startDate
+                        ).toLocaleDateString()
+                      : "Not Started"}
                   </p>
                   <p className="text-sm text-muted-foreground">Start Date</p>
                 </div>
               </div>
 
-              <Button variant="outline" className="w-full" onClick={() => navigate('/program')}>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => navigate("/program")}
+              >
                 View Full Program Details
               </Button>
             </CardContent>
